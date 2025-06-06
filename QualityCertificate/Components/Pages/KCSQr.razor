@@ -1,0 +1,91 @@
+﻿@page "/KCS"
+@inject IJSRuntime JS
+<style>
+    .certificate-container {
+        position: relative;
+        min-height: 100vh;
+     
+        background-image: url('/images/trongdong.png');
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 500px 500px; /* bạn có thể điều chỉnh kích thước logo */
+       /*  background-color: white; /* để rõ nền khi in */ 
+        opacity:0,5;
+    }
+
+    .transparent-paper {
+       /*  background-color: transparent !important; */
+        background-color: rgba(255, 255, 255, 0.85) !important; /* nền trắng mờ */
+   /*      box-shadow: none !important; /* Bỏ đổ bóng nếu không muốn */ 
+    }
+    * {
+        font-family: 'Times New Roman', Times, serif !important;
+    }
+
+  
+</style>
+@if (IsSuccess)
+{
+
+   @*  <MudButton OnClick="PrintCertificate" Color="Color.Primary" Variant="Variant.Filled">
+        In chứng chỉ
+    </MudButton>
+ *@
+    <div id="print-area" class="certificate-container">
+        <MudPaper Elevation="4" Class="pa-6 mx-auto transparent-paper" Style="min-height: 100vh;">
+            <MudImage src="images/LoGoHoangThach.png" alt="Company Logo" style="max-width: 150px; margin-bottom: 2rem;" />
+
+
+            <MudText Align="Align.Center" Style="color: #C49D6B; font-size:20px; font-weight:bold" Class="mb-3">CHỨNG NHẬN KẾT QUẢ THỬ NGHIỆM XI MĂNG</MudText>
+            <MudText Align="Align.Center" Style=" font-size:20px; font-weight:bold" Class="mb-6">CERTIFICATE OF CEMENT QUALITY </MudText>
+
+            <MudGrid>
+                <MudItem xs="2">
+                    <MudText>Số phiếu chất lượng</MudText>
+                    <MudText><b>@Input.Quality_Number</b></MudText>
+                </MudItem>
+                <MudItem xs="3">
+                    <MudText>Biển xe:</MudText>
+                    <MudText><b>@Input.Vehicle_Code - @Input.Second_Vehicle_Code</b> </MudText>
+                </MudItem>
+                <MudItem xs="3">
+                    <MudText>Chủng loại::</MudText>
+                    <MudText><b>@Input.Item_Name</b></MudText>
+                </MudItem>
+                <MudItem xs="2">
+                    <MudText>Khối lượng:</MudText>
+                    <MudText><b>@Input.DeliveryQty_Kg.ToString("N0") Kg</b></MudText>
+                </MudItem>
+                <MudItem xs="2">
+                    <MudText>Số lô:</MudText>
+                    <MudText><b>@Input.Batch_Number</b></MudText>
+                </MudItem>
+         
+                <!-- Thêm thông tin tùy ý -->
+            </MudGrid>
+
+            <MudDivider Class="my-4" />
+
+            <MudText>Chứng nhận này xác nhận rằng: <b>Mã QR là hợp lệ và sản phẩm đáp ứng các tiêu chuẩn chất lượng do Xi măng Viccem Hoàng Thạch cung cấp.</b></MudText>
+
+            <MudText Align="Align.Right" Class="mt-12"><b>Hoàng Thạch ngày: @Input.Quality_Date.Value.ToShortDateString()</b></MudText>
+
+
+        </MudPaper>
+         
+    </div>
+        <!-- Nội dung chính -->
+       
+     
+  
+
+}
+else
+{
+    <MudText Color="Color.Error">Thông tin phiếu chất lượng không hợp lệ</MudText>
+}
+
+
+@code {
+
+}

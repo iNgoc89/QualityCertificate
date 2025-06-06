@@ -1,0 +1,3 @@
+﻿window.printCertificate = () => {
+    window.print();
+};

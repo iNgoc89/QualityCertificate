@@ -1,0 +1,11 @@
+﻿@page "/login"
+@inject NavigationManager Navigation
+@inject IConfiguration Configuration
+@code {
+    public static string LoginUrl = string.Empty;
+    protected override void OnInitialized()
+    {
+        LoginUrl = Configuration["Jwt:Login"] ?? "https://account.hoangthach.vn/Login";
+        Navigation.NavigateTo($"{LoginUrl}?returnUrl={System.Net.WebUtility.UrlEncode(Navigation.BaseUri)}");
+    }
+}

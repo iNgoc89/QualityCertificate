@@ -1,0 +1,82 @@
+﻿@using HoangThach.AccountShared.Models.Entities
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+
+@if (IsDebug)
+{
+    <MudNavMenu>
+
+
+        @if (render)
+        {
+            <MudNavLink Href="" Match="NavLinkMatch.All" IconColor="@Color.Primary" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+            <MudNavLink Href="CementCQ" Match="NavLinkMatch.All" IconColor="@Color.Primary" Icon="@Icons.Material.Filled.CloudQueue">Phiếu chất lượng</MudNavLink>
+     
+        }
+
+    </MudNavMenu>
+}
+else
+{
+    <MudNavMenu>
+
+
+        @if (render)
+        {
+           
+                    
+            <AuthorizeView Roles="KCS.Admin">
+                <Authorized>
+                    <MudNavLink Href="" Match="NavLinkMatch.All" IconColor="@Color.Primary" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+
+                    <MudNavLink Href="CementCQ" Match="NavLinkMatch.All" IconColor="@Color.Primary" Icon="@Icons.Material.Filled.CloudQueue">Phiếu chất lượng</MudNavLink>
+
+                </Authorized>
+            </AuthorizeView>
+  
+        }
+
+    </MudNavMenu>
+}
+
+@code {
+
+    private bool IsDebug { get; set; }
+    bool render = false;
+    public string UserId = "";
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            render = true;
+  
+
+            var authState = await AuthenticationState;
+            var user = authState.User;
+
+            if (user.Identity is not null && user.Identity.IsAuthenticated)
+            {
+
+                var claims = user.Claims;
+          
+                UserId = user!.Claims.First().Value;
+            }
+            StateHasChanged();
+        }
+    }
+
+        protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+     #if DEBUG
+    IsDebug = true;
+#else
+        IsDebug = false;
+#endif
+    }
+  
+}

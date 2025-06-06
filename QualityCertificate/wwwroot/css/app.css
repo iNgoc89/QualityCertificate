@@ -1,0 +1,104 @@
+﻿
+
+/*body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: auto;
+}*/
+
+.login-page {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100vw;
+    background-image: url('/images/AnhCongTy2.jpg'); /* Đường dẫn đến hình nền */
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(243, 244, 246, 0.9);
+}
+
+/* Container chứa form */
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+/* Form đăng nhập */
+.login-form {
+    background: rgba(0, 0, 0, 0.2); /*Màu nền form, đậm hơn nền */
+    /*box-shadow: 10px 6px 0 rgba(0, 0, 0, 0.2);*/ /* Hiệu ứng đổ bóng */
+    padding: 30px;
+    width: 100%;
+}
+
+
+/* Định dạng MudTextField */
+.custom-textfield {
+    color: snow
+}
+
+    .custom-textfield > .mud-input-label {
+        color: snow !important;
+    }
+/*
+    .custom-textfield:hover {
+        transform: scale(1.02);
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+    }
+*/
+@media (max-width: 768px) {
+    .login-form-container {
+        width: 100%;
+    }
+}
+/* Định dạng nút đăng nhập */
+.custom-button {
+    background-color: #43A047;
+    color: white;
+    font-weight: bold;
+    border-radius: 25px;
+    padding: 10px 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+    .custom-button:hover {
+        background: linear-gradient(90deg, #ff9966 0%, #ff6f61 100%);
+        transform: translateY(-2px);
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.25);
+    }
+/* Container chứa logo */
+.logo-container {
+    text-align: center;
+    margin-bottom: 20px; /* Khoảng cách giữa logo và nội dung */
+}
+
+/* Logo */
+.logo {
+    width: 100%;
+    height: auto; /* Tự động điều chỉnh chiều cao */
+    display: inline-block;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #print-area, #print-area * {
+        visibility: visible;
+    }
+
+    #print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    .mud-appbar, .mud-drawer {
+        display: none !important;
+    }
+}

@@ -1,0 +1,159 @@
+﻿@page "/CementCQ"
+@using Blazored.LocalStorage
+@using HoangThach.AccountShared.Models.ViewModels
+@using HoangThach.AccountShared.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using QualityCertificate.Datas.Entity
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
+@inject IJSRuntime JSRuntime
+@inject IAuthService AuthService
+@inject IConfiguration Configuration
+
+<PageTitle>Quản lý Phiếu chất lượng</PageTitle>
+<style>
+    .textipcenter input[type="text"] {
+        text-align: center;
+    }
+</style>
+@if (isAuthenticated)
+{
+    <AuthorizeView Roles="KCS.Admin">
+        <Authorized>
+            <EditForm Model="@Input" Context="ct" OnValidSubmit="OnValidSubmit" onkeydown="return event.key != 'Enter'">
+                <DataAnnotationsValidator />
+                <MudStack>
+                    <MudCard Elevation="4">
+                        <MudCardHeader>
+                            <MudText Typo="Typo.h4" Class="pt-3" Align="Align.Left">
+                                In mã QR phiếu chất lượng
+                            </MudText>
+
+                        </MudCardHeader>
+                        <MudDivider DividerType="DividerType.Middle" Class="my-1" />
+                        <MudCardContent>
+
+                            <MudGrid>
+                                <MudItem xs="2">
+                                    <MudText>Số phiếu chất lượng</MudText>
+                                    <MudText><b>@Input.Quality_Number</b></MudText>
+                                </MudItem>
+                                <MudItem xs="3">
+                                    <MudText>Biển xe:</MudText>
+                                    <MudText><b style="font-size:25px; color:orangered">@Input.Vehicle_Code - @Input.Second_Vehicle_Code</b> </MudText>
+                                </MudItem>
+                                <MudItem xs="3">
+                                    <MudText>Chủng loại::</MudText>
+                                    <MudText><b>@Input.Item_Name</b></MudText>
+                                </MudItem>
+                                <MudItem xs="2">
+                                    <MudText>Khối lượng:</MudText>
+                                    <MudText><b>@Input.DeliveryQty_Kg.ToString("N0") Kg</b></MudText>
+                                </MudItem>
+                                <MudItem xs="2">
+                                    <MudText>Số lô:</MudText>
+                                    <MudText><b>@Input.Batch_Number</b></MudText>
+                                </MudItem>
+                             
+                                <!-- Thêm thông tin tùy ý -->
+                            </MudGrid>
+
+                        </MudCardContent>
+
+                        <MudDivider DividerType="DividerType.Middle" Class="my-1" />
+                        <MudCardActions Class="d-flex justify-end flex-grow-1 gap-4">
+                            <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
+                                <MudButton OnClick="Select34">Cổng ra 34: <b style="color:red">@Card34</b></MudButton>
+                                <MudButton OnClick="SelectP3">Cổng ra P3: <b style="color:red">@CardP3</b></MudButton>
+
+                            </MudButtonGroup>
+                            <MudSpacer></MudSpacer>
+                            @if (!string.IsNullOrEmpty(QrCodeImage))
+                            {
+                                <MudImage Src="@QrCodeImage" alt="QR Code" Width="50" Height="50" />
+                            }
+
+                            <MudButton StartIcon="@Icons.Material.Filled.Print" Color="Color.Primary" Class="@ShowEdit" ButtonType="ButtonType.Submit" Variant="Variant.Filled">In phiếu</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+
+                    <MudTable class="mud-data-grid" Elevation="4" Bordered="false" Height="400" FixedHeader="true" Breakpoint="Breakpoint.Sm" SortLabel="Lọc theo"
+                              Dense="true" Hover="true" Striped="false" HorizontalScrollbar="true" FooterClass="table-foot-bordered" CustomFooter="true"
+                              Items="@BulkCementCQs" Context="ctCors" @bind-SelectedItem="Input" Filter="new Func<BulkCementCQ,bool>(FilterFunc)"
+                              Loading="@ShowProgress" LoadingProgressColor="Color.Info" T="BulkCementCQ" OnRowClick="RowClickEvent">
+                        <ToolBarContent>
+
+                            <MudSpacer></MudSpacer>
+                            <MudTextField @bind-Value="searchString" Placeholder="Tìm kiếm Phiếu" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="@Color.Primary" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+
+
+                        </ToolBarContent>
+                        <HeaderContent>
+                            <MudTh></MudTh>
+                            <MudTh>
+                                #
+                            </MudTh>
+                            <MudTh><MudTableSortLabel SortBy="new Func<BulkCementCQ, object>(x => x.Gid)">Gid</MudTableSortLabel></MudTh>
+                            <MudTh><MudTableSortLabel SortBy="new Func<BulkCementCQ, object>(x => x.Vehicle_Code)">Biển đầu</MudTableSortLabel></MudTh>
+                            <MudTh><MudTableSortLabel SortBy="new Func<BulkCementCQ, object>(x => x.Second_Vehicle_Code!)">Biển đuôi</MudTableSortLabel></MudTh>
+                            <MudTh><MudTableSortLabel SortBy="new Func<BulkCementCQ, object>(x => x.DeliveryCode)">Mã giao hàng</MudTableSortLabel></MudTh>
+                            <MudTh><MudTableSortLabel SortBy="new Func<BulkCementCQ, object>(x => x.Item_Name)">Chủng loại</MudTableSortLabel></MudTh>
+                            <MudTh><MudTableSortLabel SortBy="new Func<BulkCementCQ, object>(x => x.DeliveryQty_Kg)">Khối lượng</MudTableSortLabel></MudTh>
+                            <MudTh><MudTableSortLabel SortBy="new Func<BulkCementCQ, object>(x => x.Batch_Number)">Số lô</MudTableSortLabel></MudTh>
+                            <MudTh><MudTableSortLabel SortBy="new Func<BulkCementCQ, object>(x => x.Quality_Date)">Ngày lấy mẫu</MudTableSortLabel></MudTh>
+                            <MudTh><MudTableSortLabel SortBy="new Func<BulkCementCQ, object>(x => x.Quality_Number)">Số chất lượng</MudTableSortLabel></MudTh>
+
+
+
+                        </HeaderContent>
+                        <RowTemplate>
+                            @{
+                                var rn = 0;
+                                for (int i = 0; i < BulkCementCQs.Count(); i++)
+                                {
+                                    rn = BulkCementCQs.ToList().IndexOf(ctCors) + 1;
+                                }
+                            }
+                            <MudTd DataLabel="Sửa">
+                                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@(() => SelectBulkCementCQ(ctCors.Id))" />
+                            </MudTd>
+                            <MudTd DataLabel="#">@rn</MudTd>
+                            <MudTd DataLabel="Gid">@ctCors.Gid</MudTd>
+
+                            <MudTd DataLabel="Vehicle_Code">@ctCors.Vehicle_Code</MudTd>
+                            <MudTd DataLabel="Second_Vehicle_Code">@ctCors.Second_Vehicle_Code</MudTd>
+                            <MudTd DataLabel="DeliveryCode">@ctCors.DeliveryCode</MudTd>
+                            <MudTd DataLabel="Item_Name">@ctCors.Item_Name</MudTd>
+
+                            <MudTd DataLabel="DeliveryQty_Kg">@ctCors.DeliveryQty_Kg</MudTd>
+                            <MudTd DataLabel="Batch_Number">@ctCors.Batch_Number</MudTd>
+                            <MudTd DataLabel="Quality_Date">@ctCors.Quality_Date</MudTd>
+                            <MudTd DataLabel="Quality_Number">@ctCors.Quality_Number</MudTd>
+
+                        </RowTemplate>
+
+                        <PagerContent>
+
+                            <MudTablePager />
+                        </PagerContent>
+
+                    </MudTable>
+
+
+                </MudStack>
+            </EditForm>
+        </Authorized>
+
+    </AuthorizeView>
+}
+else
+{
+    <p>Đang kiểm tra trạng thái đăng nhập</p>
+}
+
+
+
+@code {
+}
+

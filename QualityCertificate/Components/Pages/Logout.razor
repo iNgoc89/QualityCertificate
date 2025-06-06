@@ -1,0 +1,23 @@
+﻿@page "/logout"
+@using HoangThach.AccountShared.Services
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+@inject IConfiguration Configuration 
+@code {
+    public static string LoginUrl = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+        LoginUrl = Configuration["Jwt:Login"] ?? "https://account.hoangthach.vn/Login";
+        await HandleLogout();
+    }
+
+    private async Task HandleLogout()
+    {
+        var result = await AuthService.Logout();
+        if (result)
+        {
+            NavigationManager.NavigateTo($"{LoginUrl}?returnUrl={System.Net.WebUtility.UrlEncode(NavigationManager.BaseUri)}");
+        }
+    }
+}
+
