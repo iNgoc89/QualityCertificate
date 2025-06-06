@@ -14,14 +14,14 @@ namespace QualityCertificate.Services
     {
         private readonly QRService _qrService;
         private readonly IConfiguration _configuration;
-        private string _paperSize;
-        private int _width = 0;
-        private int _height = 0;
-        private float _startX = 0;
-        private float _startY = 0;
-        private string _qrUrl;
-        private int _qrWidth = 0;
-        private int _qrHeight = 0;
+        private string _paperSize = "A4";
+        private int _width = 827;
+        private int _height = 1169;
+        private float _startX = 33;
+        private float _startY = 1010;
+        private string _qrUrl = "https://qr.hoangthach.vn/KCS?Gid=";
+        private int _qrWidth = 100;
+        private int _qrHeight = 100;
 
 
         public WordOpenXmlService(QRService qrService, IConfiguration configuration) 
@@ -29,24 +29,24 @@ namespace QualityCertificate.Services
             _qrService = qrService;
             _configuration = configuration;
             _paperSize = _configuration.GetValue<string>("PrintSetting:PaperSize") ?? "A4";
-            _width = _configuration.GetValue<int>("PrintSetting:Width");
-            _height = _configuration.GetValue<int>("PrintSetting:Height");
-            _startX = _configuration.GetValue<float>("PrintSetting:StartX");
-            _startY = _configuration.GetValue<float>("PrintSetting:StartY");
-            _qrUrl = _configuration.GetValue<string>("PrintSetting:QrUrl");
-            _qrWidth = _configuration.GetValue<int>("PrintSetting:QrWidth");
-            _qrHeight = _configuration.GetValue<int>("PrintSetting:QrHeight");
+            _width = _configuration.GetValue<int?>("PrintSetting:Width") ??  827;
+            _height = _configuration.GetValue<int?>("PrintSetting:Height") ?? 1169;
+            _startX = _configuration.GetValue<float?>("PrintSetting:StartX") ?? 33;
+            _startY = _configuration.GetValue<float?>("PrintSetting:StartY") ?? 1010;
+            _qrUrl = _configuration.GetValue<string>("PrintSetting:QrUrl") ?? "https://qr.hoangthach.vn/KCS?Gid=";
+            _qrWidth = _configuration.GetValue<int?>("PrintSetting:QrWidth") ?? 100;
+            _qrHeight = _configuration.GetValue<int?>("PrintSetting:QrHeight") ?? 100;
       
         }
         public (string ErrorMsg, bool IsSucress) PrintInfoWithQR(BulkCementCQ input)
         {
             try
             {
-                PrintDocument printDoc = new PrintDocument();
+                PrintDocument printDoc = new();
 
                 // Cấu hình máy in (mặc định)
                 //"A4", 827, 1169
-                printDoc.DefaultPageSettings.PaperSize = new PaperSize("A4", 827, 1169); // A4: 8.27in x 11.69in in 1/100 inch
+                printDoc.DefaultPageSettings.PaperSize = new PaperSize(_paperSize, _width , _height); // A4: 8.27in x 11.69in in 1/100 inch
 
                 printDoc.PrintPage += async (sender, e) =>
                 {
